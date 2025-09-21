@@ -1,0 +1,67 @@
+# Compliment Bot Configuration
+
+# Application Settings
+app:
+  name: "Compliment Of The Day Bot"
+  version: "1.0.0"
+  description: "A Telegram bot that generates funny compliments based on recent news"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+
+# Database Configuration
+database:
+  name: "compliment.db"
+  type: "sqlite"
+
+# News API Configuration
+news:
+  sources: ["the-verge"]
+  page_size: 10
+  sort_by: "popularity"
+  language: "en"
+  query: "News"
+  from_days: 7
+
+# LLM Configuration
+llm:
+  model: "gpt-4o-mini"
+  temperature: 0.7
+  max_retries: 3
+
+# Telegram Bot Configuration
+telegram:
+  # Bot messages
+  messages:
+    start: "🤖✨ I'm a compliment bot! I will make your day every day by giving you a random compliment based on news! 📰💖"
+    help: "🤖✨ I'm a compliment bot! I will make your day every day by giving you a random compliment based on news! 📰💖 Please use /start to start the bot and /stop to stop the bot. 🚦"
+    already_running: "⚠️ Bot is already running! 🏃‍♂️💨"
+    stopping: "🛑 Stopping the bot! 👋"
+    not_running: "😴 Bot was not running. 💤"
+    fallback_compliment: "😺 You're very pretty kitty! 🐾"
+  
+  # Job scheduling
+  jobs:
+    compliment_hour: 9
+    compliment_minute: 0
+    generate_hour: 0
+    generate_minute: 0
+    first_run_delay: 10
+
+# Prompt Templates
+prompts:
+  system_compliment: "🌟 Using the latest news, craft a hilarious, uplifting compliment that will make someone's day! Be witty, creative, and sprinkle in some fun emojis. Make it so delightful that the reader can't help but smile! 😄📰✨"
+  user_compliment: "title: {title}\ndescription: {description}"
+  system_select: |
+    Carefully read the following compliments. Choose the one that is the most uplifting, original, and likely to make anyone's day brighter and happier. Select the compliment that stands out for its creativity, positivity, and ability to bring a genuine smile to the reader. Only return the single best compliment.
+  user_select: "{compliments}"
+
+# Error Messages
+errors:
+  no_headlines: "No news headlines available to generate compliment."
+  llm_not_available: "Compliment generator is not available at the moment."
+  llm_error: "Sorry, I couldn't generate a compliment due to an internal error."
+  no_compliment: "Sorry, I couldn't come up with a compliment today."
+  unexpected_error: "Sorry, something went wrong while generating your compliment."
