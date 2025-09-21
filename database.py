@@ -1,4 +1,5 @@
 import datetime
+from pathlib import Path
 from sqlalchemy import create_engine, Column, String, Date
 from sqlalchemy.orm import declarative_base, Session
 from setup import get_logger, get_config
@@ -18,7 +19,14 @@ class DatabaseManager:
     def __init__(self):
         database_name = get_config("database.name", "compliment.db")
         database_type = get_config("database.type", "sqlite")
-        self.engine = create_engine(f"{database_type}:///{database_name}")
+
+        # Create data directory if it doesn't exist
+        data_dir = Path("data")
+        data_dir.mkdir(exist_ok=True)
+
+        # Use data directory for database file
+        database_path = data_dir / database_name
+        self.engine = create_engine(f"{database_type}:///{database_path}")
         Base.metadata.create_all(self.engine)
 
     def add_compliment(self, compliment_content: str, date: datetime.date) -> None:
