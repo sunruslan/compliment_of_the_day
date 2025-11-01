@@ -32,8 +32,8 @@ llm:
 telegram:
   # Bot messages
   messages:
-    start: "🤖✨ I'm a compliment bot! I will make your day every day by giving you a random compliment based on news each morning! Checkout today's compliment!📰💖"
-    help: "🤖✨ I'm a compliment bot! I will make your day every day by giving you a random compliment based on news each morning! 📰💖 Please use /start to start the bot and /stop to stop the bot. 🚦"
+    start: "🤖✨ I'm a compliment bot! Every morning, I'll brighten your day with a unique compliment inspired by today's news! Check out today's compliment below. 📰💖"
+    help: "🤖✨ I'm a compliment bot! Every morning, you'll receive a special compliment inspired by current news to make your day better. 📰💖 Use /start to begin and /stop to pause the bot. 🚦"
     already_running: "⚠️ Bot is already running! 🏃‍♂️💨"
     stopping: "🛑 Stopping the bot! 👋"
     not_running: "😴 Bot was not running. 💤"
