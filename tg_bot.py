@@ -101,7 +101,7 @@ async def generate_compliment(context: ContextTypes.DEFAULT_TYPE):
     try:
         db = DatabaseManager()
         generator = ComplimentGenerator(FreshHeadlinesRetriever())
-        compliment = generator.generate_compliment_for_date(datetime.now().date())
+        compliment = generator.generate_compliment_for_date()
         if compliment:
             db.add_compliment(compliment, datetime.now().date())
             logger.info(

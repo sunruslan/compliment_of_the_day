@@ -1,4 +1,3 @@
-from datetime import date
 from typing import List
 
 from langchain_openai import ChatOpenAI
@@ -114,16 +113,16 @@ class ComplimentGenerator:
             logger.error(f"Error joining compliments: {e}")
             return {"compliments": ""}
 
-    def _get_headlines(self, target_date: date) -> List:
+    def _get_headlines(self) -> List:
         try:
-            return self.news_client.get_headlines(target_date)
+            return self.news_client.get_headlines()
         except Exception as e:
             logger.error(f"Error getting headlines: {e}")
             return []
 
-    def generate_compliment_for_date(self, target_date: date) -> str | None:
+    def generate_compliment_for_date(self) -> str | None:
         try:
-            headlines = self._get_headlines(target_date)
+            headlines = self._get_headlines()
             if not headlines:
                 logger.warning("No news headlines available to generate compliment.")
                 return None
