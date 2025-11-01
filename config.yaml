@@ -20,7 +20,7 @@ database:
 news:
   sources: ["the-verge"]
   page_size: 10
-  sort_by: "popularity"
+  sort_by: "publishedAt"
   language: "en"
   query: "News"
   from_days: 7
@@ -50,12 +50,19 @@ telegram:
     generate_minute: 0
     first_run_delay: 10
 
+# Topics to ignore during compliment selection
+ignored_topics:
+  - games
+  - religion
+
 # Prompt Templates
 prompts:
   system_compliment: "🌟 Using the latest news, craft a hilarious, uplifting compliment that will make someone's day! Be witty, creative, and sprinkle in some fun emojis. Make it so delightful that the reader can't help but smile! 😄📰✨"
   user_compliment: "title: {title}\ndescription: {description}"
   system_select: |
     Carefully read the following compliments. Choose the one that is the most uplifting, original, and likely to make anyone's day brighter and happier. Select the compliment that stands out for its creativity, positivity, and ability to bring a genuine smile to the reader. Only return the single best compliment.
+    
+    IMPORTANT: Do not select compliments that are related to or mention the following topics: {ignored_topics}. Avoid any compliments that reference these topics.
   user_select: "{compliments}"
 
 # Error Messages
