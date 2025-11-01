@@ -44,7 +44,7 @@ telegram:
   
   # Job scheduling
   jobs:
-    compliment_hour: 9
+    compliment_hour: 8
     compliment_minute: 0
     generate_hour: 0
     generate_minute: 0
