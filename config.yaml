@@ -34,16 +34,18 @@ telegram:
   # Bot messages
   messages:
     start: "🤖✨ I'm a compliment bot! Every morning, I'll brighten your day with a unique compliment inspired by today's news! Check out today's compliment below. 📰💖"
-    help: "🤖✨ I'm a compliment bot! Every morning, you'll receive a special compliment inspired by current news to make your day better. 📰💖 Use /start to begin and /stop to pause the bot. 🚦"
+    help: "I'm a compliment bot! I will make your day every day by giving you a random compliment based on news!\nCommands:\n/start - Start receiving compliments\n/stop - Stop the bot\n/settime <hour> - Set when to receive compliments (0-23 in GMT)\n  Example: /settime 8 (for 8:00 AM GMT)\n/help - Show this help message"
     already_running: "⚠️ Bot is already running! 🏃‍♂️💨"
     stopping: "🛑 Stopping the bot! 👋"
     not_running: "😴 Bot was not running. 💤"
     fallback_compliment: "😺 You're very pretty kitty! 🐾"
+    settime_usage: "Please specify an hour (0-23) in GMT: /settime <hour>\nExample: /settime 8 (for 8:00 AM GMT)"
+    settime_invalid: "Invalid hour. Please provide a number between 0 and 23.\nExample: /settime 8 (for 8:00 AM GMT)"
+    settime_success: "Time updated! Your compliment will be sent daily at the selected time (GMT)."
   
-  # Job scheduling
+  # Job scheduling (all times in GMT)
   jobs:
-    compliment_hour: 8
-    compliment_minute: 0
+    default_hour: 8  # Default hour (0-23) in GMT for sending compliments
     generate_hour: 0
     generate_minute: 0
     first_run_delay: 3
