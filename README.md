@@ -7,7 +7,7 @@ A Telegram bot that generates funny, personalized compliments based on recent ne
 - **AI-Powered Compliments**: Uses OpenAI's GPT models to generate creative compliments based on recent news
 - **Daily News Integration**: Fetches fresh headlines from NewsAPI to create contextually relevant compliments
 - **Telegram Bot Interface**: Easy-to-use commands for starting, stopping, and getting help
-- **Persistent Storage**: Stores generated compliments in a SQLite database to avoid duplicates
+- **Persistent Storage**: Stores generated compliments in a PostgreSQL database to avoid duplicates
 - **Configurable**: All settings can be customized through `config.yaml`
 - **Scheduled Generation**: Automatically generates new compliments at configurable intervals
 - **Fallback System**: Provides default compliments when news or AI services are unavailable
@@ -48,7 +48,10 @@ A Telegram bot that generates funny, personalized compliments based on recent ne
    OPENAI_API_KEY=your_openai_api_key_here
    NEWSAPI_API_KEY=your_newsapi_key_here
    TG_BOT_TOKEN=your_telegram_bot_token_here
+   DATABASE_URL=postgresql://user:password@host:port/database
    ```
+   
+   **Note**: If deploying to Railway.com, the `DATABASE_URL` is automatically provided by Railway. For local development, you can use a local PostgreSQL instance or a service like Railway, Supabase, or Neon.
 
 4. **Configure the bot** (optional):
    Edit `config.yaml` to customize news sources, AI model settings, and bot messages.
@@ -124,9 +127,15 @@ telegram:
 ### Database Settings
 ```yaml
 database:
-  name: "compliment.db"   # Database filename
-  type: "sqlite"          # Database type
+  type: "postgresql"      # Database type (PostgreSQL)
 ```
+
+**Note**: The database connection is configured via the `DATABASE_URL` environment variable. The connection string format is:
+```
+postgresql://username:password@host:port/database
+```
+
+When deploying to Railway.com, the `DATABASE_URL` is automatically set by Railway.
 
 ## 🏗️ Architecture
 
@@ -149,7 +158,7 @@ database:
 - **`tg_bot.py`**: Main Telegram bot with command handlers and job scheduling
 - **`compliment.py`**: AI-powered compliment generation using LangChain
 - **`news.py`**: News headline retrieval from NewsAPI
-- **`database.py`**: SQLite database management for storing compliments
+- **`database.py`**: PostgreSQL database management for storing compliments
 - **`setup.py`**: Centralized configuration and logging setup
 - **`config.yaml`**: Configuration file for all customizable settings
 
@@ -208,8 +217,10 @@ print(f'Generated: {compliment}')
    - Review logs for errors
 
 3. **"Database errors"**
-   - Ensure write permissions in project directory
-   - Check if `compliment.db` file exists and is accessible
+   - Verify `DATABASE_URL` environment variable is set correctly
+   - Check PostgreSQL connection credentials and network access
+   - Ensure the database exists and the user has proper permissions
+   - For Railway.com deployments, verify the database service is running
 
 ### Logs
 
