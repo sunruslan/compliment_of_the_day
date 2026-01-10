@@ -1,6 +1,6 @@
 import datetime
 import os
-from sqlalchemy import create_engine, Column, String, Date
+from sqlalchemy import create_engine, Column, String, Date, BigInteger, Integer
 from sqlalchemy.orm import declarative_base, sessionmaker
 from setup import get_logger
 
@@ -15,6 +15,13 @@ class Compliment(Base):
 
     date = Column(Date, primary_key=True)
     content = Column(String)
+
+
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    chat_id = Column(BigInteger, primary_key=True)
+    hour = Column(Integer, default=8)  # Hour in GMT (0-23)
 
 
 class DatabaseManager:
@@ -68,5 +75,40 @@ class DatabaseManager:
         except Exception as e:
             logger.error(f"Error getting compliment: {e}")
             return None
+        finally:
+            db.close()
+
+    def get_user_hour(self, chat_id: int) -> int | None:
+        """Get user's preferred hour (0-23) in GMT or None if not set."""
+        db = self.SessionLocal()
+        try:
+            user_settings = (
+                db.query(UserSettings).filter(UserSettings.chat_id == chat_id).first()
+            )
+            return user_settings.hour if user_settings else None
+        except Exception as e:
+            logger.error(f"Error getting user hour: {e}")
+            return None
+        finally:
+            db.close()
+
+    def set_user_hour(self, chat_id: int, hour: int) -> None:
+        """Set user's preferred hour (0-23) in GMT."""
+        if not (0 <= hour <= 23):
+            raise ValueError(f"Hour must be between 0 and 23, got {hour}")
+        db = self.SessionLocal()
+        try:
+            user_settings = (
+                db.query(UserSettings).filter(UserSettings.chat_id == chat_id).first()
+            )
+            if user_settings:
+                user_settings.hour = hour
+            else:
+                db.add(UserSettings(chat_id=chat_id, hour=hour))
+            db.commit()
+        except Exception as e:
+            logger.error(f"Error setting user hour: {e}")
+            db.rollback()
+            raise
         finally:
             db.close()
