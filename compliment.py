@@ -60,16 +60,9 @@ class ComplimentGenerator:
                 ]
             ) | self.llm.with_structured_output(ComplimentModel)
 
-            # Get ignored topics from config
-            ignored_topics = get_config("ignored_topics", [])
-            ignored_topics_str = ", ".join(ignored_topics) if ignored_topics else "none"
-
-            # Get system_select prompt from translations and format it with ignored topics
-            system_select_template = get_translation(
+            # Get system_select prompt from translations
+            system_select_prompt = get_translation(
                 "prompts.system_select", self.language
-            )
-            system_select_prompt = system_select_template.format(
-                ignored_topics=ignored_topics_str
             )
 
             user_select_prompt = get_translation("prompts.user_select", self.language)
