@@ -1,10 +1,12 @@
 import datetime
-from pathlib import Path
+import os
 from sqlalchemy import create_engine, Column, String, Date
-from sqlalchemy.orm import declarative_base, Session
-from setup import get_logger, get_config
+from sqlalchemy.orm import declarative_base, sessionmaker
+from setup import get_logger
 
 logger = get_logger(__name__)
+
+# Base class for the database models
 Base = declarative_base()
 
 
@@ -17,34 +19,54 @@ class Compliment(Base):
 
 class DatabaseManager:
     def __init__(self):
-        database_name = get_config("database.name", "compliment.db")
-        database_type = get_config("database.type", "sqlite")
+        # Get DATABASE_URL from environment (Railway.com provides this)
+        database_url = os.getenv("DATABASE_URL")
 
-        # Create data directory if it doesn't exist
-        data_dir = Path("data")
-        data_dir.mkdir(exist_ok=True)
+        if not database_url:
+            raise ValueError(
+                "DATABASE_URL environment variable is required. "
+                "Please set it in your .env file or environment."
+            )
 
-        # Use data directory for database file
-        database_path = data_dir / database_name
-        self.engine = create_engine(f"{database_type}:///{database_path}")
-        Base.metadata.create_all(self.engine)
+        # Clean up the URL: strip whitespace and remove quotes if present
+        database_url = database_url.strip().strip('"').strip("'")
+
+        # Railway.com provides DATABASE_URL in format: postgresql://user:pass@host:port/dbname
+        # SQLAlchemy expects postgresql:// (not postgres://) for psycopg2
+        # Some providers use postgres://, so we normalize it
+        if database_url.startswith("postgres://"):
+            database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+        # Create synchronous engine
+        self.engine = create_engine(database_url, pool_pre_ping=True)
+
+        # Create sessionmaker with bind to engine
+        self.SessionLocal = sessionmaker(
+            autocommit=False, autoflush=False, bind=self.engine
+        )
+
+        # Initialize database tables
+        Base.metadata.create_all(bind=self.engine)
 
     def add_compliment(self, compliment_content: str, date: datetime.date) -> None:
+        db = self.SessionLocal()
         try:
-            with Session(self.engine) as session:
-                session.add(Compliment(content=compliment_content, date=date))
-                session.commit()
+            db.add(Compliment(content=compliment_content, date=date))
+            db.commit()
         except Exception as e:
             logger.error(f"Error adding compliment: {e}")
+            db.rollback()
+            raise
+        finally:
+            db.close()
 
     def get_compliment(self, date: datetime.date) -> str | None:
-        compliment = None
+        db = self.SessionLocal()
         try:
-            with Session(self.engine) as session:
-                compliment = (
-                    session.query(Compliment).filter(Compliment.date == date).first()
-                )
-                return compliment.content if compliment else None
+            compliment = db.query(Compliment).filter(Compliment.date == date).first()
+            return compliment.content if compliment else None
         except Exception as e:
             logger.error(f"Error getting compliment: {e}")
             return None
+        finally:
+            db.close()

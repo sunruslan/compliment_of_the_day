@@ -12,9 +12,10 @@ logging:
   format: "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 
 # Database Configuration
+# PostgreSQL connection is configured via DATABASE_URL environment variable
+# Railway.com provides DATABASE_URL automatically
 database:
-  name: "compliment.db"
-  type: "sqlite"
+  type: "postgresql"
 
 # News API Configuration
 news:
