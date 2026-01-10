@@ -1,7 +1,7 @@
 # English translations
 
 messages:
-  start: "🤖✨ I'm a compliment bot! Every morning, I'll brighten your day with a unique compliment inspired by today's news! Check out today's compliment below. 📰💖"
+  start: "🤖✨ I'm a compliment bot! Every day, I'll brighten your day with a unique compliment inspired by today's news! Check out today's compliment below. 📰💖"
   help: "I'm a compliment bot! I will make your day every day by giving you a random compliment based on news!\n\nCommands:\n/start - Start receiving compliments\n/stop - Stop the bot\n/settime <hour> - Set when to receive compliments (0-23 in GMT)\n  Example: /settime 8 (for 8:00 AM GMT)\n/setlanguage <en|ru> - Set your preferred language\n  Example: /setlanguage ru\n/help - Show this help message"
   already_running: "⚠️ Bot is already running! 🏃‍♂️💨"
   stopping: "🛑 Stopping the bot! 👋"
