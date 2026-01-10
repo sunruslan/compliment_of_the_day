@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 from news import FreshHeadlinesRetriever
 from setup import get_logger, get_config
+from translations import get_translation
 
 logger = get_logger(__name__)
 
@@ -23,8 +24,10 @@ class ComplimentGenerator:
         news_client: FreshHeadlinesRetriever,
         llm_model: str = None,
         llm_temperature: float = None,
+        language: str = "en",
     ):
         self.news_client = news_client
+        self.language = language
         # Use config defaults if not provided
         llm_model = llm_model or get_config("llm.model", "gpt-4o-mini")
         llm_temperature = llm_temperature or get_config("llm.temperature", 0.7)
@@ -42,22 +45,18 @@ class ComplimentGenerator:
             self.select_best_compliment_chain = None
             return
         try:
+            # Get prompts from translations
+            system_compliment_prompt = get_translation(
+                "prompts.system_compliment", self.language
+            )
+            user_compliment_prompt = get_translation(
+                "prompts.user_compliment", self.language
+            )
+
             self.single_compliment_chain = ChatPromptTemplate.from_messages(
                 [
-                    (
-                        "system",
-                        get_config(
-                            "prompts.system_compliment",
-                            "Generate a funny compliment based on recent news:",
-                        ),
-                    ),
-                    (
-                        "user",
-                        get_config(
-                            "prompts.user_compliment",
-                            "title: {title}\ndescription: {description}",
-                        ),
-                    ),
+                    ("system", system_compliment_prompt),
+                    ("user", user_compliment_prompt),
                 ]
             ) | self.llm.with_structured_output(ComplimentModel)
 
@@ -65,19 +64,20 @@ class ComplimentGenerator:
             ignored_topics = get_config("ignored_topics", [])
             ignored_topics_str = ", ".join(ignored_topics) if ignored_topics else "none"
 
-            # Get system_select prompt and format it with ignored topics
-            system_select_template = get_config(
-                "prompts.system_select",
-                "Select the best among the following compliments:",
+            # Get system_select prompt from translations and format it with ignored topics
+            system_select_template = get_translation(
+                "prompts.system_select", self.language
             )
             system_select_prompt = system_select_template.format(
                 ignored_topics=ignored_topics_str
             )
 
+            user_select_prompt = get_translation("prompts.user_select", self.language)
+
             self.select_best_compliment_chain = ChatPromptTemplate.from_messages(
                 [
                     ("system", system_select_prompt),
-                    ("user", get_config("prompts.user_select", "{compliments}")),
+                    ("user", user_select_prompt),
                 ]
             ) | self.llm.with_structured_output(ComplimentModel)
         except Exception as e:

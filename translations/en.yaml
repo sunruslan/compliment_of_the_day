@@ -1,0 +1,37 @@
+# English translations
+
+messages:
+  start: "🤖✨ I'm a compliment bot! Every morning, I'll brighten your day with a unique compliment inspired by today's news! Check out today's compliment below. 📰💖"
+  help: "I'm a compliment bot! I will make your day every day by giving you a random compliment based on news!\n\nCommands:\n/start - Start receiving compliments\n/stop - Stop the bot\n/settime <hour> - Set when to receive compliments (0-23 in GMT)\n  Example: /settime 8 (for 8:00 AM GMT)\n/setlanguage <en|ru> - Set your preferred language\n  Example: /setlanguage ru\n/help - Show this help message"
+  already_running: "⚠️ Bot is already running! 🏃‍♂️💨"
+  stopping: "🛑 Stopping the bot! 👋"
+  not_running: "😴 Bot was not running. 💤"
+  fallback_compliment: "😺 You're very pretty kitty! 🐾"
+  settime_usage: "Please specify an hour (0-23) in GMT: /settime <hour>\nExample: /settime 8 (for 8:00 AM GMT)"
+  settime_invalid: "Invalid hour. Please provide a number between 0 and 23.\nExample: /settime 8 (for 8:00 AM GMT)"
+  settime_success: "Time set to {hour_display} GMT ({display_time} GMT)! Your compliment will be sent daily at this time."
+  setlanguage_usage: "Please specify a language: /setlanguage <en|ru>\nExample: /setlanguage ru"
+  setlanguage_invalid: "Invalid language. Please use 'en' for English or 'ru' for Russian.\nExample: /setlanguage ru"
+  setlanguage_success: "Language set to {language_name}! Your compliments and messages will now be in English."
+
+prompts:
+  system_compliment: "🌅 Good morning! Using the latest news, craft a hilarious and uplifting compliment that's perfect to start someone's day with a smile. The compliment should brighten their morning, spread positivity, and be especially perfect for people in their 20s as they get ready for a new day. Make it feel like the ideal message to wake up to—a mix of encouragement, optimism, and playful wit. Relate it cleverly to the news, and anchor it in modern life: career, social life, relationships, pop culture, technology, and the unique journey of being in your twenties. Use a warm and friendly tone, sprinkle in fun and fresh emojis, and make it feel like a cheerful morning message from a caring friend. ☀️😊📰✨\n\nIMPORTANT: Write the compliment in English."
+  user_compliment: "title: {title}\ndescription: {description}"
+  system_select: |
+    Carefully read the following compliments. Choose the one that is the most uplifting, original, and perfectly tailored for people in their 20s to receive as a morning message. Prioritize compliments that give off positive morning energy and encouragement, making them feel ready for a great day ahead. Compliments should reference modern life—pop culture, career, friendships, and the unique experiences of being in your twenties. Select the compliment that stands out for its creativity, authenticity, positivity, and ability to resonate with a 20-something. It should feel like something a close friend would send to brighten your morning. Only return the single best compliment.
+
+    IMPORTANT: Do not select compliments that are related to or mention the following topics: {ignored_topics}. Avoid any compliments that reference these topics.
+    IMPORTANT: The selected compliment must be in English.
+  user_select: "{compliments}"
+
+errors:
+  no_headlines: "No news headlines available to generate compliment."
+  llm_not_available: "Compliment generator is not available at the moment."
+  llm_error: "Sorry, I couldn't generate a compliment due to an internal error."
+  no_compliment: "Sorry, I couldn't come up with a compliment today."
+  unexpected_error: "Sorry, something went wrong while generating your compliment."
+
+language_names:
+  en: "English"
+  ru: "Russian"
+
