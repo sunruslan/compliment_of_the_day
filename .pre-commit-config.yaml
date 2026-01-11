@@ -1,4 +1,10 @@
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: no-commit-to-branch
+        args: ["-p", "^(?!(feature-|hotfix-))", "-b", "master", "-b", "main"]
+        name: "Branch name must match feature-* or hotfix-* pattern"
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.13.0
     hooks:
