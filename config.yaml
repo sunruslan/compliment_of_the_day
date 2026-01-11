@@ -3,7 +3,7 @@
 # Application Settings
 app:
   name: "Compliment Of The Day Bot"
-  version: "1.0.2"
+  version: "1.0.3"
   description: "A Telegram bot that generates funny compliments based on recent news"
 
 # Logging Configuration
@@ -23,7 +23,7 @@ news:
 
 # LLM Configuration
 llm:
-  model: "gpt-4o-mini"
+  model: "gpt-5-mini"
   temperature: 0.7
   max_retries: 3
 
