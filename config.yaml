@@ -3,7 +3,6 @@
 # Application Settings
 app:
   name: "Compliment Of The Day Bot"
-  version: "1.0.3"
   description: "A Telegram bot that generates funny compliments based on recent news"
 
 # Logging Configuration
