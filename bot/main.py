@@ -5,7 +5,8 @@ from datetime import time, timedelta
 from telegram.ext import ApplicationBuilder, CommandHandler, Defaults
 from setup import setup_application, get_logger, get_config
 from bot.handlers import start, stop, help, settime, setlanguage
-from bot.jobs import generate_compliment, GMT
+from bot.jobs import generate_compliment, send_compliment, GMT
+from db import DatabaseManager
 
 logger = get_logger(__name__)
 
@@ -65,6 +66,23 @@ def main():
         time=time(hour=generate_hour, minute=generate_minute),
         name="generate_compliment_ru",
     )
+
+    # Schedule jobs for all activated users on startup
+    db = DatabaseManager()
+    activated_users = db.get_activated_users()
+    logger.info(f"Found {len(activated_users)} activated user(s), scheduling jobs...")
+
+    for user in activated_users:
+        chat_id = user["chat_id"]
+        hour = user["hour"]
+        # Schedule daily run at GMT time for each activated user
+        application.job_queue.run_daily(
+            send_compliment,
+            time=time(hour=hour, minute=0),
+            chat_id=chat_id,
+            name=str(chat_id),
+        )
+        logger.info(f"Scheduled job for user {chat_id} at {hour:02d}:00 GMT")
 
     application.run_polling()
 
