@@ -151,3 +151,47 @@ class DatabaseManager:
             raise
         finally:
             db.close()
+
+    def set_user_activated(self, chat_id: int, activated: bool) -> None:
+        """Set user's activated status."""
+        db = self.SessionLocal()
+        try:
+            user_settings = (
+                db.query(UserSettings).filter(UserSettings.chat_id == chat_id).first()
+            )
+            if user_settings:
+                user_settings.activated = activated
+            else:
+                # If user doesn't exist, create with default values
+                default_hour = 8
+                db.add(
+                    UserSettings(
+                        chat_id=chat_id,
+                        hour=default_hour,
+                        language="en",
+                        activated=activated,
+                    )
+                )
+            db.commit()
+        except Exception as e:
+            logger.error(f"Error setting user activated status: {e}")
+            db.rollback()
+            raise
+        finally:
+            db.close()
+
+    def get_activated_users(self) -> list[dict]:
+        """Get all activated users with their settings.
+        Returns a list of dictionaries with chat_id, hour, and language."""
+        db = self.SessionLocal()
+        try:
+            users = db.query(UserSettings).filter(UserSettings.activated).all()
+            return [
+                {"chat_id": user.chat_id, "hour": user.hour, "language": user.language}
+                for user in users
+            ]
+        except Exception as e:
+            logger.error(f"Error getting activated users: {e}")
+            return []
+        finally:
+            db.close()

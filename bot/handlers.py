@@ -24,13 +24,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     hour = db.get_user_hour(chat_id)
     language = db.get_user_language(chat_id)
 
-    # If user doesn't exist, set defaults
+    # If user doesn't exist (hour is None), set defaults
     if hour is None:
         hour = get_config("telegram.jobs.default_hour", 8)
         # Save default hour and language for new user
         db.set_user_hour(chat_id, hour)
-        if language == "en":  # Only set if not already set
+        # Ensure language is set (get_user_language returns "en" by default, but we should save it)
+        if not language or language == "en":
             db.set_user_language(chat_id, "en")
+        else:
+            db.set_user_language(chat_id, language)
+
+    # Set activated to True
+    db.set_user_activated(chat_id, True)
 
     first = get_config("telegram.jobs.first_run_delay", 10)
 
@@ -61,6 +67,8 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     db = DatabaseManager()
     language = db.get_user_language(chat_id)
     job_removed = remove_job_if_exists(str(chat_id), context)
+    # Set activated to False
+    db.set_user_activated(chat_id, False)
     text = (
         get_translation("messages.stopping", language)
         if job_removed
@@ -98,6 +106,8 @@ async def settime(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Update user hour
     try:
         db.set_user_hour(chat_id, hour)
+        # Activate user when they set a time (they want to receive compliments)
+        db.set_user_activated(chat_id, True)
     except ValueError:
         await update.effective_message.reply_text(
             text=get_translation("messages.settime_invalid", language)

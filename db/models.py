@@ -1,6 +1,6 @@
 """Database models for the compliment bot."""
 
-from sqlalchemy import Column, String, Date, BigInteger, Integer
+from sqlalchemy import Column, String, Date, BigInteger, Integer, Boolean
 from sqlalchemy.orm import declarative_base
 
 # Base class for the database models
@@ -25,3 +25,4 @@ class UserSettings(Base):
     chat_id = Column(BigInteger, primary_key=True)
     hour = Column(Integer, default=8)  # Hour in GMT (0-23)
     language = Column(String, default="en")  # Language code: 'en' or 'ru'
+    activated = Column(Boolean, default=False)  # Whether user has activated the bot
